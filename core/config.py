@@ -11,8 +11,8 @@ def load_config(path):
     parser = configparser.ConfigParser()
     parser.read(cfg_path)
 
-    if "service" not in parser:
-        raise RuntimeError("Missing [service] section")
+    if "app" not in parser:
+        raise RuntimeError("Missing [app] section")
 
     if "modules" not in parser:
         raise RuntimeError("Missing [modules] section")
