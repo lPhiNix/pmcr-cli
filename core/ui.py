@@ -1,3 +1,4 @@
+# core/ui.py
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
 

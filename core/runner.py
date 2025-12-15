@@ -1,18 +1,22 @@
+# core/runner.py
 import time
 import traceback
 from core.loader import load_callable
 
-# Ejecuta un comando definido en el cfg
-def run_command(config, name, args, ui):
-    commands = config["modules"]
 
-    if name not in commands:
+def run_command(config, name, args, ui):
+    modules = config["modules"]
+    app = config["app"]
+
+    if name not in modules:
         raise RuntimeError(f"Command '{name}' not defined")
 
-    target = commands[name]
-    path, func = target.split(":")
+    module = modules[name]
+    path = module["path"]
+    func = module["function"]
 
-    ui.header(f"Running command: {name}")
+
+    ui.header(f"{app['name']} · {name}")
     ui.info(f"Loading {path}:{func}")
 
     callable_fn = load_callable(path, func)
@@ -23,7 +27,6 @@ def run_command(config, name, args, ui):
         with ui.progress("Executing command") as progress:
             task = progress.add_task("Working...", total=100)
 
-            # Contexto mínimo para el comando
             ctx = {
                 "progress": lambda p: progress.update(task, completed=p),
                 "log": ui.info,
@@ -31,7 +34,7 @@ def run_command(config, name, args, ui):
 
             callable_fn(args, ctx)
 
-    except Exception as e:
+    except Exception:
         ui.error("Command failed")
         ui.console.print(traceback.format_exc())
         raise
